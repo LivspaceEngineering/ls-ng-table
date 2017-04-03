@@ -1,17 +1,20 @@
 .ng-table th {
-  text-align: center;
+  text-align: left;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  font-weight: 500;
+  background-color: #FFF;
+  vertical-align: top !important;
 }
 .ng-table th.sortable {
   cursor: pointer;
 }
 .ng-table th.sortable .sort-indicator {
-  padding-right: 18px;
+  padding-right: 30px;
   position: relative;
 }
 .ng-table th.sortable .sort-indicator:after,
@@ -41,7 +44,8 @@
 }
 .ng-table th.sortable.sort-desc,
 .ng-table th.sortable.sort-asc {
-  background-color: rgba(141, 192, 219, 0.25);
+  /*background-color: rgba(141, 192, 219, 0.25);*/
+
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 }
 .ng-table th.sortable.sort-desc .sort-indicator:after,

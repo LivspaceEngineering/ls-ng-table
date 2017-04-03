@@ -1186,6 +1186,27 @@ function($scope, NgTableParams, $timeout, $parse, $compile, $attrs, $element, ng
     }
 
     commonInit();
+
+    /* Date Picker Control */
+    $scope.format = "yyyy-MM-dd";
+    $scope.popup = {};
+    // to toggle open/close
+    $scope.openCalendar = function(key) {
+        if( !$scope.popup.hasOwnProperty(key) )
+            $scope.popup[key] = {};
+        $scope.popup[key]["opened"] = true;
+    };
+    $scope.getKey = function(prefix,name) {
+       return prefix+"-"+name;
+    }
+    // sample date options JSON
+    $scope.dateOptions = {
+        // dateDisabled: disabled,
+        // formatYear: 'yy',
+        maxDate: new Date(2020, 5, 22),
+        // minDate: new Date(),
+        startingDay: 0
+    };
 }]);
 
 
@@ -1506,12 +1527,14 @@ app.directive('ngTablePagination', ['$compile', 'ngTableEventsChannel',
 
 angular.module('ngTable').run(['$templateCache', function ($templateCache) {
 	$templateCache.put('ng-table/filterRow.html', '<tr ng-show="show_filter" class="ng-table-filters"> <th data-title-text="{{$column.titleAlt(this) || $column.title(this)}}" ng-repeat="$column in $columns" ng-if="$column.show(this)" class="filter"> <div ng-repeat="(name, filter) in $column.filter(this)"> <div ng-include="config.getTemplateUrl(filter)"></div> </div> </th> </tr> ');
+	$templateCache.put('ng-table/filters/date-range.html', '<div class="clearfix"> <div class="pull-left" style="width:50%"> <div class="datepicker-wrapper" ng-click="openCalendar(getKey(\'from\',name))"> <input type="text" class="form-control" uib-datepicker-popup="{{format}}" is-open="popup[getKey(\'from\',name)].opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" show-weeks="false" show-button-bar="false" close-on-date-selection="true" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name][\'from_date\']"/> <span class="fa fa-calendar"></span> </div> </div> <div class="pull-right" style="width:50%"> <div class="datepicker-wrapper" ng-click="openCalendar(getKey(\'to\',name))"> <input type="text" class="form-control" uib-datepicker-popup="{{format}}" is-open="popup[getKey(\'to\',name)].opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" show-weeks="false" show-button-bar="false" close-on-date-selection="true" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name][\'to_date\']"/> <span class="fa fa-calendar"></span> </div> </div> </div> ');
+	$templateCache.put('ng-table/filters/date.html', '<div class="datepicker-wrapper" ng-click="openCalendar(getKey(\'\',name))"> <input type="text" class="form-control" uib-datepicker-popup="{{format}}" is-open="popup[getKey(\'\',name)].opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" show-weeks="false" show-button-bar="false" close-on-date-selection="true" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]"/> <span class="fa fa-calendar"></span> </div> ');
 	$templateCache.put('ng-table/filters/number.html', '<input type="number" name="{{name}}" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]" class="input-filter form-control"/> ');
-	$templateCache.put('ng-table/filters/select-multiple.html', '<select ng-options="data.id as data.title for data in $column.data" ng-disabled="$filterRow.disabled" multiple ng-multiple="true" ng-model="params.filter()[name]" class="filter filter-select-multiple form-control" name="{{name}}"> </select> ');
-	$templateCache.put('ng-table/filters/select.html', '<select ng-options="data.id as data.title for data in $column.data" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]" class="filter filter-select form-control" name="{{name}}"> <option style="display:none" value=""></option> </select> ');
+	$templateCache.put('ng-table/filters/select-multiple.html', '<ui-select multiple ng-model="params.filter()[name]" class="inline-match-items" theme="bootstrap" close-on-select="true" remove-selected="false" ng-disabled="$filterRow.disabled"> <ui-select-match placeholder=""> <p class="ls-match-choice">{{$item.title}}</p> </ui-select-match> <ui-select-choices repeat="data in $column.data | filter:$select.search"> <span ng-bind-html="data.title | highlight: $select.search"></span> </ui-select-choices> </ui-select> ');
+	$templateCache.put('ng-table/filters/select.html', '<ui-select ng-model="params.filter()[name]" allow-clear class="full-width custom-match-items" theme="bootstrap" search-enabled="true" ng-disabled="$filterRow.disabled"> <ui-select-match placeholder=""> {{$select.selected.title}} </ui-select-match> <ui-select-choices repeat="data in $column.data | filter:$select.search"> <span ng-bind-html="data.title | highlight: $select.search"></span> </ui-select-choices> </ui-select> ');
 	$templateCache.put('ng-table/filters/text.html', '<input type="text" name="{{name}}" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]" class="input-filter form-control"/> ');
 	$templateCache.put('ng-table/header.html', '<ng-table-sorter-row></ng-table-sorter-row> <ng-table-filter-row></ng-table-filter-row> ');
-	$templateCache.put('ng-table/pager.html', '<div class="ng-cloak ng-table-pager" ng-if="params.data.length"> <div ng-if="params.settings().counts.length" class="ng-table-counts btn-group pull-right"> <button ng-repeat="count in params.settings().counts" type="button" ng-class="{\'active\':params.count()==count}" ng-click="params.count(count)" class="btn btn-default"> <span ng-bind="count"></span> </button> </div> <ul class="pagination ng-table-pagination"> <li ng-class="{\'disabled\': !page.active && !page.current, \'active\': page.current}" ng-repeat="page in pages" ng-switch="page.type"> <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo;</a> <a ng-switch-when="first" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a> <a ng-switch-when="page" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a> <a ng-switch-when="more" ng-click="params.page(page.number)" href="">&#8230;</a> <a ng-switch-when="last" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a> <a ng-switch-when="next" ng-click="params.page(page.number)" href="">&raquo;</a> </li> </ul> </div> ');
+	$templateCache.put('ng-table/pager.html', '<div class="ng-cloak ng-table-pager clearfix" ng-if="params.data.length"> <div ng-if="params.settings().counts.length" class="ng-table-counts btn-group pull-left"> <div class="btn-group" is-open="status.isOpen" uib-dropdown> <div uib-dropdown-toggle> <button type="button" class="btn-dropdown text-gray" style="min-width:0px;padding:8px 20px">{{params.count()}}</button> </div> <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="split-button" style="min-width:0px;bottom:100%;top:initial"> <li role="menuitem"><a href="javascript:void(0)" ng-repeat="count in params.settings().counts" ng-bind="count" ng-click="params.count(count)"></a></li> </ul> </div> </div> <ul class="pagination ng-table-pagination pull-right" style="margin:0px"> <li ng-class="{\'disabled\': !page.active && !page.current, \'active\': page.current}" ng-repeat="page in pages" ng-switch="page.type"> <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo;</a> <a ng-switch-when="first" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a> <a ng-switch-when="page" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a> <a ng-switch-when="more" ng-click="params.page(page.number)" href="">&#8230;</a> <a ng-switch-when="last" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a> <a ng-switch-when="next" ng-click="params.page(page.number)" href="">&raquo;</a> </li> </ul> </div> ');
 	$templateCache.put('ng-table/sorterRow.html', '<tr> <th title="{{$column.headerTitle(this)}}" ng-repeat="$column in $columns" ng-class="{ \'sortable\': $column.sortable(this), \'sort-asc\': params.sorting()[$column.sortable(this)]==\'asc\', \'sort-desc\': params.sorting()[$column.sortable(this)]==\'desc\' }" ng-click="sortBy($column, $event)" ng-if="$column.show(this)" ng-init="template=$column.headerTemplateURL(this)" class="header {{$column.class(this)}}"> <div ng-if="!template" class="ng-table-header" ng-class="{\'sort-indicator\': params.settings().sortingIndicator==\'div\'}"> <span ng-bind="$column.title(this)" ng-class="{\'sort-indicator\': params.settings().sortingIndicator==\'span\'}"></span> </div> <div ng-if="template" ng-include="template"></div> </th> </tr> ');
 }]);
     return app;
