@@ -1,0 +1,15 @@
+<!--select ng-options="data.id as data.title for data in $column.data"
+        ng-disabled="$filterRow.disabled"
+        ng-model="params.filter()[name]"
+        class="filter filter-select form-control" name="{{name}}">
+    <option style="display:none" value=""></option>
+</select-->
+<!--UI select with search-->
+<ui-select ng-model="params.filter()[name]" allow-clear class="full-width custom-match-items"  theme="bootstrap" search-enabled="true" ng-disabled="$filterRow.disabled">
+    <ui-select-match placeholder="">
+        {{$select.selected.title}}
+    </ui-select-match>
+    <ui-select-choices repeat="data in $column.data | filter:$select.search">
+        <span  ng-bind-html="data.title | highlight: $select.search"></span>
+    </ui-select-choices>
+</ui-select>
