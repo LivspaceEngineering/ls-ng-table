@@ -10,6 +10,6 @@
         {{$select.selected.title}}
     </ui-select-match>
     <ui-select-choices repeat="data in $column.data | filter:$select.search">
-        <span  ng-bind-html="data.title | highlight: $select.search"></span>
+        <span class="filter-value"  ng-bind-html="data.title | highlight: $select.search"></span>
     </ui-select-choices>
 </ui-select>

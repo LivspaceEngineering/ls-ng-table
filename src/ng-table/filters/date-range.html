@@ -6,18 +6,18 @@
                 ng-required="true" close-text="Close" alt-input-formats="altInputFormats" 
                 show-weeks="false" 
                 show-button-bar="false"
-                close-on-date-selection="true" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]['from_date']"/>
+                close-on-date-selection="true" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]['from_date']" placeholder="From"/>
             <span class="fa fa-calendar"></span>
        </div>
     </div>
-    <div class="pull-right" style="width:50%">
+    <div class="pull-left" style="width:50%">
         <div class="datepicker-wrapper" ng-click="openCalendar(getKey('to',name))">
             <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
                 is-open="popup[getKey('to',name)].opened" datepicker-options="dateOptions"
                 ng-required="true" close-text="Close" alt-input-formats="altInputFormats" 
                 show-weeks="false" 
                 show-button-bar="false"
-                close-on-date-selection="true" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]['to_date']"/>
+                close-on-date-selection="true" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]['to_date']" placeholder="To"/>
             <span class="fa fa-calendar"></span>
        </div>
     </div>
