@@ -5,8 +5,8 @@
     <option style="display:none" value=""></option>
 </select-->
 <!--UI select with search-->
-<ui-select ng-model="params.filter()[name]" allow-clear class="full-width custom-match-items"  theme="bootstrap" search-enabled="true" ng-disabled="$filterRow.disabled">
-    <ui-select-match placeholder="">
+<ui-select ng-model="params.filter()[name]" class="full-width"  theme="bootstrap" search-enabled="true" ng-disabled="$filterRow.disabled">
+    <ui-select-match placeholder="" allow-clear="true">
         {{$select.selected.title}}
     </ui-select-match>
     <ui-select-choices repeat="data in $column.data | filter:$select.search">
